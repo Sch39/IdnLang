@@ -15,6 +15,13 @@ STRING_LITERAL: '"' .*? '"';
 WS: [ \t\r\n]+ -> skip;
 COMMENT: '//' ~[\r\n]* -> skip;
 
+// Mathematic operator
+PLUS: '+';
+MINUS: '-';
+MUL: '*';
+DIV: '/';
+MOD: '%';
+
 // Parser rules
 program: (statement)* EOF;
 
@@ -43,7 +50,11 @@ type
     ;
 
 expression
-    : INT_LITERAL
+    : expression (MUL | DIV) expression
+    | expression (MOD) expression
+    | expression (PLUS | MINUS) expression
+    | '(' expression ')'
+    | INT_LITERAL
     | FLOAT_LITERAL
     | STRING_LITERAL
     | ID

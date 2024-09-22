@@ -2,6 +2,6 @@ var x: bilBulat = 50000000
 var y: bilDesimal = 20.5
 var z: teks = "Hello, World!"
 x=5
-cetak x
-cetak y
+cetak x+y
+cetak y*5%7
 cetak z

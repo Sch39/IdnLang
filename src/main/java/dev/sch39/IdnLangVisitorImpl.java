@@ -35,14 +35,37 @@ class IdnlangVisitorImpl extends IdnLangBaseVisitor<Object> {
 
   @Override
   public Object visitExpression(IdnLangParser.ExpressionContext ctx) {
-    if (ctx.INT_LITERAL() != null) {
-      return Integer.parseInt(ctx.INT_LITERAL().getText());
-    } else if (ctx.FLOAT_LITERAL() != null) {
-      return Float.parseFloat(ctx.FLOAT_LITERAL().getText());
-    } else if (ctx.STRING_LITERAL() != null) {
-      return ctx.STRING_LITERAL().getText().replaceAll("\"", "");
-    } else if (ctx.ID() != null) {
-      return variables.get(ctx.ID().getText());
+    if (ctx.getChildCount() == 3) {
+      Object left = visit(ctx.getChild(0));
+      String operator = ctx.getChild(1).getText();
+      Object right = visit(ctx.getChild(2));
+
+      switch (operator) {
+        case "*":
+          return ((Number) left).doubleValue() * ((Number) right).doubleValue();
+        case "/":
+          return ((Number) left).doubleValue() / ((Number) right).doubleValue();
+        case "%":
+          return ((Number) left).intValue() % ((Number) right).intValue();
+        case "+":
+          return ((Number) left).doubleValue() + ((Number) right).doubleValue();
+        case "-":
+          return ((Number) left).doubleValue() + ((Number) right).doubleValue();
+        default:
+          throw new RuntimeException("Error: operator tidak dikenali");
+      }
+    } else if (ctx.getChildCount() == 1) {
+      if (ctx.INT_LITERAL() != null) {
+        return Integer.parseInt(ctx.INT_LITERAL().getText());
+      } else if (ctx.FLOAT_LITERAL() != null) {
+        return Float.parseFloat(ctx.FLOAT_LITERAL().getText());
+      } else if (ctx.STRING_LITERAL() != null) {
+        return ctx.STRING_LITERAL().getText().replaceAll("\"", "");
+      } else if (ctx.ID() != null) {
+        return variables.get(ctx.ID().getText());
+      }
+    } else if (ctx.getChildCount() == 3 && ctx.getChild(0).getText().equals("(")) {
+      return visit(ctx.getChild(1));
     }
     return null;
   }
