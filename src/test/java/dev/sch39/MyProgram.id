@@ -1,0 +1,7 @@
+var x: bilBulat = 10
+var y: bilDesimal = 20.5
+var z: teks = "Hello, World!"
+
+cetak x
+cetak x
+cetak z
