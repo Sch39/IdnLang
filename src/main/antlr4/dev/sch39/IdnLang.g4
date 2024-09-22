@@ -21,6 +21,7 @@ program: (statement)* EOF;
 statement
     : variableDeclaration
     | printStatement
+    | assignment
     ;
 
 variableDeclaration
@@ -29,6 +30,10 @@ variableDeclaration
 
 printStatement
     : 'cetak' expression
+    ;
+
+assignment
+    : ID '=' expression
     ;
 
 type

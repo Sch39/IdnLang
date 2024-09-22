@@ -10,7 +10,19 @@ class IdnlangVisitorImpl extends IdnLangBaseVisitor<Object> {
   public Void visitVariableDeclaration(IdnLangParser.VariableDeclarationContext ctx) {
     String varName = ctx.ID().getText();
     Object value = visit(ctx.expression());
-    variables.put(varName, value);
+    // Cek tipe data secara dinamis
+    if (value instanceof Integer) {
+      int intValue = (int) value;
+      if (intValue >= Byte.MIN_VALUE && intValue <= Byte.MAX_VALUE) {
+        variables.put(varName, (byte) intValue); // Alokasi tipe byte
+      } else if (intValue >= Short.MIN_VALUE && intValue <= Short.MAX_VALUE) {
+        variables.put(varName, (short) intValue); // Alokasi tipe short
+      } else {
+        variables.put(varName, intValue); // Alokasi tipe int
+      }
+    } else {
+      variables.put(varName, value); // Alokasikan tipe float atau string sesuai jenisnya
+    }
     return null;
   }
 
@@ -32,6 +44,18 @@ class IdnlangVisitorImpl extends IdnLangBaseVisitor<Object> {
     } else if (ctx.ID() != null) {
       return variables.get(ctx.ID().getText());
     }
+    return null;
+  }
+
+  @Override
+  public Void visitAssignment(IdnLangParser.AssignmentContext ctx) {
+    String varName = ctx.ID().getText();
+    if (!variables.containsKey(varName)) {
+      throw new RuntimeException("Error: Variabel " + varName + " belum dideklarasikan");
+    }
+
+    Object value = visit(ctx.expression());
+    variables.put(varName, value);
     return null;
   }
 }
